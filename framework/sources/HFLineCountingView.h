@@ -17,6 +17,7 @@
 @property (nonatomic) NSUInteger bytesPerLine;
 @property (nonatomic) HFLineNumberFormat lineNumberFormat;
 @property (nullable, nonatomic, weak) HFLineCountingRepresenter *representer;
+@property (nonatomic) NSUInteger startOffset;
 
 + (NSUInteger)digitsRequiredToDisplayLineNumber:(unsigned long long)lineNumber inFormat:(HFLineNumberFormat)format;
 

@@ -25,6 +25,7 @@ static const CGFloat kShadowWidth = 6;
     [coder encodeObject:_representer forKey:@"HFRepresenter"];
     [coder encodeInt64:_bytesPerLine forKey:@"HFBytesPerLine"];
     [coder encodeInt64:_lineNumberFormat forKey:@"HFLineNumberFormat"];
+    [coder encodeInt64:_startOffset forKey:@"HFStartOffset"];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -35,6 +36,7 @@ static const CGFloat kShadowWidth = 6;
     _representer = [coder decodeObjectForKey:@"HFRepresenter"];
     _bytesPerLine = (NSUInteger)[coder decodeInt64ForKey:@"HFBytesPerLine"];
     _lineNumberFormat = (NSUInteger)[coder decodeInt64ForKey:@"HFLineNumberFormat"];
+    _startOffset = (NSUInteger)[coder decodeInt64ForKey:@"HFStartOffset"];
     return self;
 }
 
@@ -178,7 +180,7 @@ static const CGFloat kShadowWidth = 6;
     
     NSUInteger lineCount = ll2l(range.length);
     const NSUInteger stride = _bytesPerLine;
-    unsigned long long lineValue = HFProductULL(range.location, _bytesPerLine);
+    unsigned long long lineValue = HFProductULL(range.location, _bytesPerLine) + _startOffset;
     NSUInteger characterCount = [self characterCountForLineRange:range];
     char *buffer = check_malloc(characterCount);
     NSUInteger bufferIndex = 0;
@@ -264,6 +266,14 @@ static const CGFloat kShadowWidth = 6;
 - (void)setLineHeight:(CGFloat)height {
     if (_lineHeight != height) {
         _lineHeight = height;
+        textAttributes = nil;
+        [self setNeedsDisplay:YES];
+    }
+}
+
+- (void)setStartOffset:(NSUInteger)startOffset {
+    if (_startOffset != startOffset) {
+        _startOffset = startOffset;
         textAttributes = nil;
         [self setNeedsDisplay:YES];
     }
