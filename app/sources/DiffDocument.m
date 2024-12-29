@@ -10,8 +10,6 @@
 #import "DataInspectorRepresenter.h"
 #import "HFDocumentOperationView.h"
 #import "DiffTextViewContainer.h"
-#import "TextDividerRepresenter.h"
-#import "HFBinaryTemplateRepresenter.h"
 #import <HexFiend/HexFiend.h>
 
 @interface DiffDocument (ForwardDeclarations)
@@ -29,35 +27,6 @@
 @end
 
 @implementation DiffDocument
-
-- (void)showViewForRepresenter:(HFRepresenter *)rep {
-    HFRepresenter *leftRep = [allRepresenters objectForKey:[rep className]];
-    
-    if (rep == statusBarRepresenter) {
-        NSView *view = rep.view;
-        [self.window setContentBorderThickness:view.frame.size.height forEdge:NSRectEdgeMinY];
-        [self.window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
-    }
-    [[leftTextView controller] addRepresenter:leftRep];
-    [[leftTextView layoutRepresenter] addRepresenter:leftRep];
-    [[rightTextView controller] addRepresenter:rep];
-    [[rightTextView layoutRepresenter] addRepresenter:rep];
-}
-
-- (void)hideViewForRepresenter:(HFRepresenter *)rep {
-    HFASSERT(rep != nil);
-    HFRepresenter *leftRep = [allRepresenters objectForKey:[rep className]];
-
-    HFASSERT([layoutRepresenter.representers indexOfObjectIdenticalTo:rep] != NSNotFound);
-    if (rep == statusBarRepresenter) {
-        [self.window setContentBorderThickness:0 forEdge:NSRectEdgeMinY];
-        [self.window setAutorecalculatesContentBorderThickness:NO forEdge:NSMinYEdge];
-    }
-    [[leftTextView controller] removeRepresenter:leftRep];
-    [[leftTextView layoutRepresenter] removeRepresenter:leftRep];
-    [[rightTextView controller] removeRepresenter:rep];
-    [[rightTextView layoutRepresenter] removeRepresenter:rep];
-}
 
 /* Returns either nil, or an array of two documents that would be compared in the "Compare (Range of) Front Documents" menu item. */
 + (NSArray *)getFrontTwoDocumentsForDiffing {
@@ -380,42 +349,6 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
         
         /* We haven't receieved a scroll event */
         timeOfLastScrollEvent = -DBL_MAX;
-        
-        leftColumnRepresenter = [[HFColumnRepresenter alloc] init];
-        leftLineCountingRepresenter = [[HFLineCountingRepresenter alloc] init];
-        leftBinaryRepresenter = [[HFBinaryTextRepresenter alloc] init];
-        leftHexRepresenter = [[HFHexTextRepresenter alloc] init];
-        leftAsciiRepresenter = [[HFStringEncodingTextRepresenter alloc] init];
-        leftScrollRepresenter = [[HFVerticalScrollerRepresenter alloc] init];
-        leftStatusBarRepresenter = [[HFStatusBarRepresenter alloc] init];
-        leftDataInspectorRepresenter = [[DataInspectorRepresenter alloc] init];
-        leftTextDividerRepresenter = [[TextDividerRepresenter alloc] init];
-        leftBinaryTemplateRepresenter = [[HFBinaryTemplateRepresenter alloc] init];
-        leftBinaryTemplateRepresenter.viewWidth = [NSUserDefaults.standardUserDefaults doubleForKey:@"BinaryTemplateRepresenterWidth"];
-        
-        allRepresenters = [[NSMutableDictionary<NSString*, HFRepresenter*> alloc] init];
-        [allRepresenters setObject:leftColumnRepresenter forKey:[leftColumnRepresenter className]];
-        [allRepresenters setObject:leftLineCountingRepresenter forKey:[leftLineCountingRepresenter className]];
-        [allRepresenters setObject:leftBinaryRepresenter forKey:[leftBinaryRepresenter className]];
-        [allRepresenters setObject:leftHexRepresenter forKey:[leftHexRepresenter className]];
-        [allRepresenters setObject:leftAsciiRepresenter forKey:[leftAsciiRepresenter className]];
-        [allRepresenters setObject:leftScrollRepresenter forKey:[leftScrollRepresenter className]];
-        [allRepresenters setObject:leftStatusBarRepresenter forKey:[leftStatusBarRepresenter className]];
-        [allRepresenters setObject:leftDataInspectorRepresenter forKey:[leftDataInspectorRepresenter className]];
-        [allRepresenters setObject:leftTextDividerRepresenter forKey:[leftTextDividerRepresenter className]];
-        [allRepresenters setObject:leftBinaryTemplateRepresenter forKey:[leftBinaryTemplateRepresenter className]];
-        
-        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(leftLineCountingViewChangedWidth:) name:HFLineCountingRepresenterMinimumViewWidthChanged object:leftLineCountingRepresenter];
-        [center addObserver:self selector:@selector(columnRepresenterViewHeightChanged:) name:HFColumnRepresenterViewHeightChanged object:leftColumnRepresenter];
-        [center addObserver:self selector:@selector(lineCountingRepCycledLineNumberFormat:) name:HFLineCountingRepresenterCycledLineNumberFormat object:leftLineCountingRepresenter];
-        [center addObserver:self selector:@selector(dataInspectorChangedRowCount:) name:DataInspectorDidChangeRowCount object:leftDataInspectorRepresenter];
-        [center addObserver:self selector:@selector(dataInspectorDeletedAllRows:) name:DataInspectorDidDeleteAllRows object:leftDataInspectorRepresenter];
-        
-        NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-        
-        leftLineCountingRepresenter.lineNumberFormat = (HFLineNumberFormat)[defs integerForKey:@"LineNumberFormat"];
-        [leftColumnRepresenter setLineCountingWidth:leftLineCountingRepresenter.preferredWidth];
     }
     return self;
 }
@@ -454,9 +387,6 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     }
     if (propertyMask & HFControllerFont) {
         [client setFont:[controller font]];
-    }
-    if (propertyMask & HFControllerByteTheme) {
-        [client setByteTheme:[controller byteTheme]];
     }
 }
 
@@ -696,6 +626,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
 
 - (void)fixupTextView:(HFTextView *)textView {
     [textView setBordered:NO];
+    BOOL foundLineCountingRep = NO;
     
     /* Install our undo manager */
     [[textView controller] setUndoManager:[self undoManager]]; 
@@ -708,8 +639,24 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     /* Remove the representers we don't want */
     for(HFRepresenter *rep in [textView layoutRepresenter].representers) {
-        [[textView layoutRepresenter] removeRepresenter:rep];
-        [[textView controller] removeRepresenter:rep];
+        if ([rep isKindOfClass:[HFVerticalScrollerRepresenter class]] || [rep isKindOfClass:[HFStringEncodingTextRepresenter class]] || [rep isKindOfClass:[HFStatusBarRepresenter class]] || [rep isKindOfClass:[DataInspectorRepresenter class]]) {
+            [[textView layoutRepresenter] removeRepresenter:rep];
+            [[textView controller] removeRepresenter:rep];
+        }
+        else if ([rep isKindOfClass:[HFTextRepresenter class]]) {
+            /* Ensure our hex representer is horizontally resizable */
+            [(NSView *)[hexRepresenter view] setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+        }
+        else if ([rep isKindOfClass:[HFLineCountingRepresenter class]]) {
+            foundLineCountingRep = YES;
+        }
+    }
+    /* Install a line counting rep if it doesn't already have one */
+    if (! foundLineCountingRep) {
+        /* Ensure our left text view has a line counting representer. */
+        HFLineCountingRepresenter *lineCounter = [[HFLineCountingRepresenter alloc] init];
+        [[leftTextView controller] addRepresenter:lineCounter];
+        [[leftTextView layoutRepresenter] addRepresenter:lineCounter];
     }
     
     /* It's not editable */
@@ -727,8 +674,15 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     [leftBytes incrementChangeLockCounter];
     [rightBytes incrementChangeLockCounter];
+    NSUserDefaults *userDefaults = NSUserDefaults.standardUserDefaults;
+    BOOL onlyReplace = [userDefaults boolForKey:@"OnlyReplaceInComparison"];
+    BOOL skipOneByteMatches = [userDefaults boolForKey:@"SkipOneByteMatches"];
     [diffComputationView startOperation:^id(HFProgressTracker *tracker) {
-        return [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:self->leftBytes toDestination:self->rightBytes trackingProgress:tracker];
+        return [[HFByteArrayEditScript alloc] initWithDifferenceFromSource:self->leftBytes
+                                                             toDestination:self->rightBytes
+                                                               onlyReplace:onlyReplace
+                                                        skipOneByteMatches:skipOneByteMatches
+                                                          trackingProgress:tracker];
     } completionHandler:^(id script) {
         [self->leftBytes decrementChangeLockCounter];
         [self->rightBytes decrementChangeLockCounter];
@@ -758,10 +712,6 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     /* Fix up our two text views */
     [self fixupTextView:leftTextView];
     [self fixupTextView:rightTextView];
-    [self showViewForRepresenter:lineCountingRepresenter];
-    [self showViewForRepresenter:hexRepresenter];
-    [self showViewForRepresenter:asciiRepresenter];
-    [self showViewForRepresenter:textDividerRepresenter];
 
     /* Install the two byte arrays */
     [[leftTextView controller] setByteArray:leftBytes];
@@ -800,8 +750,7 @@ static enum DiffOverlayViewRangeType_t rangeTypeForValue(CGFloat value) {
     
     /* Update our window size so it's the right size for our data */
     NSRect windowFrame = [window frame];
-    const NSUInteger bytesPerLine = [(NSNumber *)[NSUserDefaults.standardUserDefaults objectForKey:@"BytesPerLine"] unsignedIntegerValue];
-    windowFrame.size.width = [textViewContainer minimumViewWidthForBytesPerLine:bytesPerLine];
+    windowFrame.size = [self minimumWindowFrameSizeForProposedSize:windowFrame.size];
     [window setFrame:windowFrame display:YES];
     
     /* Start at instruction zero */
@@ -1220,36 +1169,6 @@ static const CGFloat kScrollMultiplier = (CGFloat)1.5;
     NSView *view = [textViewContainer superview];
     HFASSERT([view isKindOfClass:[NSSplitView class]]);
     return view;
-}
-
-- (void)leftLineCountingViewChangedWidth:(NSNotification *)note {
-    HFLineCountingRepresenter *rep = note.object;
-    HFASSERT(rep == leftLineCountingRepresenter);
-    [self lineCountingRepChangedWidth:rep associatedColumnRep:leftColumnRepresenter];
-}
-
-#pragma mark Set representer properties (override BaseDocument)
-- (void)setStringEncoding:(HFStringEncoding *)encoding {
-    [(HFStringEncodingTextRepresenter *)leftAsciiRepresenter setEncoding:encoding];
-    [super setStringEncoding:encoding];
-}
-
-- (IBAction)setLineNumberFormat:(id)sender {
-    const NSInteger tag = ((NSMenuItem*)sender).tag;
-    const HFLineNumberFormat format = (HFLineNumberFormat)tag;
-    HFASSERT(format == HFLineNumberFormatDecimal || format == HFLineNumberFormatHexadecimal);
-    leftLineCountingRepresenter.lineNumberFormat = format;
-    [super setLineNumberFormat:sender];
-}
-
-- (BOOL)setByteGrouping:(NSUInteger)newBytesPerColumn {
-    [[leftTextView controller] setBytesPerColumn:newBytesPerColumn];
-    return [super setByteGrouping:newBytesPerColumn];
-}
-
-- (void)setByteTheme:(HFByteTheme *)byteTheme {
-    [super setByteTheme:byteTheme];
-    leftTextView.controller.byteTheme = byteTheme;
 }
 
 @end

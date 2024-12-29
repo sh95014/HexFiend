@@ -19,6 +19,10 @@
 #import <HexFiend/HFCustomEncoding.h>
 #import <HexFiend/HFEncodingManager.h>
 
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
+#import "HFPrivilegedHelperConnection.h"
+#endif
+
 @interface AppDelegate ()
 
 @property BOOL parsedCommandLineArgs;
@@ -55,6 +59,12 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)note {
     USE(note);
+
+#if ! HF_NO_PRIVILEGED_FILE_OPERATIONS
+    [HFFileReference setPrivilegedHelperShared:^{
+        return [HFPrivilegedHelperConnection sharedConnection];
+    }];
+#endif
 
     if (! [[NSUserDefaults standardUserDefaults] boolForKey:@"HFDebugMenu"]) {
         /* Remove the Debug menu unless we want it */
@@ -273,16 +283,9 @@ static NSComparisonResult compareFontDisplayNames(NSFont *a, NSFont *b, void *un
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item {
-    const SEL sel = [item action];
-    BaseDataDocument *document = NSDocumentController.sharedDocumentController.currentDocument;
-    const BOOL isDiffDocument = [document isKindOfClass:[DiffDocument class]];
-    if (isDiffDocument) {
-        if (sel == @selector(diffFrontDocuments:) ||
-            sel == @selector(diffFrontDocumentsByRange:)) {
-            return NO;
-        }
-    }
+    SEL sel = [item action];
     if (sel == @selector(setFontFromMenuItem:)) {
+        BaseDataDocument *document = [[NSDocumentController sharedDocumentController] currentDocument];
         BOOL check = NO;
         if (document) {
             NSFont *font = [document font];

@@ -63,6 +63,7 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
     NSUInteger cleanGenerationCount;
 
     BOOL loadingWindow;
+    BOOL hideTextDividerOverride;
 }
 
 - (void)moveSelectionForwards:(NSMenuItem *)sender;
@@ -127,15 +128,5 @@ extern NSString * const BaseDataDocumentDidChangeStringEncodingNotification;
 - (IBAction)setLiveReloadFromMenuItem:sender;
 
 - (void)insertData:(NSData *)data;
-
-- (void)lineCountingRepCycledLineNumberFormat:(NSNotification*)note;
-- (void)columnRepresenterViewHeightChanged:(NSNotification *)note;
-- (void)lineCountingViewChangedWidth:(NSNotification *)note;
-- (void)dataInspectorChangedRowCount:(NSNotification *)note;
-- (void)dataInspectorDeletedAllRows:(NSNotification *)note;
-- (void)lineCountingRepChangedWidth:(HFLineCountingRepresenter *)rep associatedColumnRep:(HFColumnRepresenter *)columnRep;
-
-- (BOOL)setByteGrouping:(NSUInteger)newBytesPerColumn;
-- (void)setByteTheme:(HFByteTheme *)byteTheme;
 
 @end

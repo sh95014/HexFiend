@@ -67,6 +67,9 @@
 #import <HexFiend/HFLineCountingView.h>
 #import <HexFiend/HFRepresenterTextView.h>
 #import <HexFiend/HFUIUtils.h>
+#import <HexFiend/HFPrivilegedHelper.h>
+#import <HexFiend/HFTextDividerRepresenter.h>
+#import <HexFiend/HFRepresenterHexTextView.h>
 
 /* The following is all for Doxygen */
 
