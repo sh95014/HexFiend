@@ -21,7 +21,12 @@ static NSString *copy1CharStringForByteValue(unsigned long long byteValue, NSUIn
     /* ASCII is mishandled :( */
     BOOL encodingOK = YES;
     if (encoding.isASCII && bytesPerChar == 1 && bytes[0] > 0x7F) {
+#ifdef MARIANI
+        // Apple ][ characters often have the high bit set
+        bytes[0] &= 0x7F;
+#else
         encodingOK = NO;
+#endif
     }
 
     /* Now create a string from these bytes */
