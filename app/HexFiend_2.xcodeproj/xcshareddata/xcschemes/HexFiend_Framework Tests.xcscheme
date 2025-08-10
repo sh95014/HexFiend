@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1530"
+   LastUpgradeVersion = "1630"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -13,9 +13,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO"
-            parallelizable = "YES"
-            testExecutionOrdering = "random">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9408FBF919DD72DE004F800E"
@@ -23,17 +21,6 @@
                BlueprintName = "HexFiend_Framework Tests"
                ReferencedContainer = "container:HexFiend_2.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "HFBTreeTests/testPerformance">
-               </Test>
-               <Test
-                  Identifier = "HFBTreeTests/testRandom">
-               </Test>
-               <Test
-                  Identifier = "HFFrameworkTests/testBadLengthFileWriting">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

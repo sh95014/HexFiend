@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1530"
+   LastUpgradeVersion = "1630"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -23,7 +23,7 @@
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Release+CodeSign"
+      buildConfiguration = "Release+MAS"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -42,7 +42,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release+CodeSign"
+      buildConfiguration = "Release+MAS"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       displayScaleIsEnabled = "NO"
@@ -77,7 +77,7 @@
    <ProfileAction
       displayScaleIsEnabled = "NO"
       displayScale = "1.00"
-      buildConfiguration = "Release+CodeSign"
+      buildConfiguration = "Release+MAS"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -94,10 +94,10 @@
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Release+CodeSign">
+      buildConfiguration = "Release+MAS">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release+CodeSign"
+      buildConfiguration = "Release+MAS"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

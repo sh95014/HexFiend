@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1530"
+   LastUpgradeVersion = "1630"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,24 +14,35 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D00C15E40FF091FF006D021F"
-               BuildableName = "HexFiendling.app"
-               BlueprintName = "HexFiendling"
+               BlueprintIdentifier = "8D1107260486CEB800E47090"
+               BuildableName = "Hex Fiend.app"
+               BlueprintName = "HexFiend_2"
                ReferencedContainer = "container:HexFiend_2.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Debug+CodeSign"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A50859A62B204C8100325B36"
+               BuildableName = "Hex Fiend Tests.xctest"
+               BlueprintName = "Hex Fiend Tests"
+               ReferencedContainer = "container:HexFiend_2.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Debug+CodeSign"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       displayScaleIsEnabled = "NO"
@@ -46,17 +57,49 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D00C15E40FF091FF006D021F"
-            BuildableName = "HexFiendling.app"
-            BlueprintName = "HexFiendling"
+            BlueprintIdentifier = "8D1107260486CEB800E47090"
+            BuildableName = "Hex Fiend.app"
+            BlueprintName = "HexFiend_2"
             ReferencedContainer = "container:HexFiend_2.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-HFDebugMenu"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "YES"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
+      <AdditionalOptions>
+         <AdditionalOption
+            key = "DYLD_INSERT_LIBRARIES"
+            value = "/usr/lib/libgmalloc.dylib"
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "NSZombieEnabled"
+            value = "YES"
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "MallocGuardEdges"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "MallocScribble"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
+      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       displayScaleIsEnabled = "NO"
       displayScale = "1.00"
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug+CodeSign"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -65,18 +108,18 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D00C15E40FF091FF006D021F"
-            BuildableName = "HexFiendling.app"
-            BlueprintName = "HexFiendling"
+            BlueprintIdentifier = "8D1107260486CEB800E47090"
+            BuildableName = "Hex Fiend.app"
+            BlueprintName = "HexFiend_2"
             ReferencedContainer = "container:HexFiend_2.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug">
+      buildConfiguration = "Debug+CodeSign">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug+CodeSign"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
